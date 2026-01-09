@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Layer 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none
+        }
+
+        nav {
+            background: #161b22;
+            border-bottom: 2px solid #30363d;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .logo {
+            color: #58a6ff;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 3px
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px
+        }
+
+        .nav-link {
+            padding: 8px 20px;
+            border: 2px solid #30363d;
+            color: #484f58;
+            text-decoration: none;
+            font-size: 11px
+        }
+
+        .nav-link.active {
+            border-color: #238636;
+            color: #3fb950
+        }
+
+        .nav-link.locked {
+            opacity: 0.3;
+            pointer-events: none
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px
+        }
+
+        .panel {
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #30363d;
+            background: #161b22;
+            padding: 40px
+        }
+
+        .title {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #58a6ff;
+            margin-bottom: 30px
+        }
+
+        .lock-container {
+            position: relative;
+            height: 250px;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .dial {
+            width: 180px;
+            height: 180px;
+            border: 4px solid #30363d;
+            border-radius: 50%;
+            position: relative;
+            cursor: grab
+        }
+
+        .dial:active {
+            cursor: grabbing
+        }
+
+        .dial-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: #58a6ff;
+            border-radius: 50%
+        }
+
+        .dial-marker {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 25px;
+            background: #3fb950;
+            border-radius: 2px
+        }
+
+        .dial-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%
+        }
+
+        .dial-num {
+            position: absolute;
+            font-size: 14px;
+            color: #8b949e
+        }
+
+        .target-indicator {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #f0883e
+        }
+
+        .combo-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px
+        }
+
+        .combo-slot {
+            width: 50px;
+            height: 60px;
+            border: 2px solid #30363d;
+            background: #0d1117;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #3fb950
+        }
+
+        .combo-slot.active {
+            border-color: #58a6ff
+        }
+
+        .combo-slot.locked {
+            border-color: #238636;
+            color: #238636
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            background: #238636;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px
+        }
+
+        .btn:hover {
+            background: #2ea043
+        }
+
+        .btn.reset {
+            background: #21262d;
+            border: 2px solid #30363d;
+            margin-top: 10px
+        }
+
+        .current {
+            text-align: center;
+            font-size: 48px;
+            color: #58a6ff;
+            margin-bottom: 10px
+        }
+
+        .hint {
+            text-align: center;
+            font-size: 11px;
+            color: #8b949e
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">◆ LAYER 2/3</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">01</a>
+            <a href="layer2.html" class="nav-link active">02</a>
+            <a href="layer3.html" class="nav-link locked" id="n3">03</a>
+        </div>
+    </nav>
+    <main>
+        <div class="panel">
+            <div class="title">Combination Lock</div>
+            <div class="subtitle">Rotate the dial to enter the 3-digit combination</div>
+            <div class="combo-display">
+                <div class="combo-slot" id="s0">?</div>
+                <div class="combo-slot" id="s1">?</div>
+                <div class="combo-slot" id="s2">?</div>
+            </div>
+            <div class="lock-container">
+                <div class="target-indicator"></div>
+                <div class="dial" id="dial">
+                    <div class="dial-marker"></div>
+                    <div class="dial-center"></div>
+                    <div class="dial-numbers" id="nums"></div>
+                </div>
+            </div>
+            <div class="current" id="current">0</div>
+            <div class="hint">TARGET: <span id="target"></span></div>
+            <button class="btn" onclick="lockNumber()">Lock Number</button>
+            <button class="btn reset" onclick="reset()">Reset</button>
+        </div>
+    </main>
+    <script>
+        if (!localStorage.getItem('l1')) location.href = 'index.html';
+        let combo = [], target = [], angle = 0, locked = 0;
+        function init() {
+            target = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+            document.getElementById('target').textContent = target.join(' - ');
+            const nums = document.getElementById('nums');
+            nums.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const n = document.createElement('div');
+                n.className = 'dial-num';
+                const a = (i * 36 - 90) * Math.PI / 180;
+                n.style.left = (90 + 70 * Math.cos(a) - 7) + 'px';
+                n.style.top = (90 + 70 * Math.sin(a) - 7) + 'px';
+                n.textContent = i;
+                nums.appendChild(n);
+            }
+        }
+        const dial = document.getElementById('dial');
+        let dragging = false, startAngle = 0, startRotation = 0;
+        function getAngle(e) {
+            const rect = dial.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left - rect.width / 2;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top - rect.height / 2;
+            return Math.atan2(y, x) * 180 / Math.PI;
+        }
+        dial.onmousedown = dial.ontouchstart = e => { dragging = true; startAngle = getAngle(e); startRotation = angle };
+        document.onmousemove = document.ontouchmove = e => {
+            if (!dragging) return;
+            const a = getAngle(e);
+            angle = startRotation + (a - startAngle);
+            dial.style.transform = `rotate(${angle}deg)`;
+            let num = Math.round((-angle % 360 + 360) % 360 / 36) % 10;
+            document.getElementById('current').textContent = num;
+        };
+        document.onmouseup = document.ontouchend = () => dragging = false;
+        function lockNumber() {
+            if (locked >= 3) return;
+            const num = parseInt(document.getElementById('current').textContent);
+            combo.push(num);
+            const slot = document.getElementById('s' + locked);
+            slot.textContent = num;
+            slot.classList.add('locked');
+            locked++;
+            if (locked === 3) {
+                if (combo[0] === target[0] && combo[1] === target[1] && combo[2] === target[2]) {
+                    localStorage.setItem('l2', '1');
+                    setTimeout(() => location.href = 'layer3.html', 500);
+                } else {
+                    setTimeout(reset, 1000);
+                }
+            } else {
+                document.getElementById('s' + locked).classList.add('active');
+            }
+        }
+        function reset() {
+            combo = []; locked = 0; angle = 0;
+            dial.style.transform = 'rotate(0deg)';
+            document.getElementById('current').textContent = '0';
+            for (let i = 0; i < 3; i++) {
+                const s = document.getElementById('s' + i);
+                s.textContent = '?'; s.classList.remove('locked', 'active');
+            }
+            document.getElementById('s0').classList.add('active');
+        }
+        function check() { if (localStorage.getItem('l2')) document.getElementById('n3').classList.remove('locked') }
+        init(); check(); document.getElementById('s0').classList.add('active');
+    </script>
+</body>
+
+</html>

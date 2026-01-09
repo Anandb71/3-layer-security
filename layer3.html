@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Layer 3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none
+        }
+
+        nav {
+            background: #161b22;
+            border-bottom: 2px solid #30363d;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .logo {
+            color: #58a6ff;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 3px
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px
+        }
+
+        .nav-link {
+            padding: 8px 20px;
+            border: 2px solid #30363d;
+            color: #484f58;
+            text-decoration: none;
+            font-size: 11px
+        }
+
+        .nav-link.active {
+            border-color: #238636;
+            color: #3fb950
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px
+        }
+
+        .panel {
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #30363d;
+            background: #161b22;
+            padding: 40px
+        }
+
+        .title {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #58a6ff;
+            margin-bottom: 30px
+        }
+
+        .slider-container {
+            margin-bottom: 30px
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #8b949e;
+            margin-bottom: 8px
+        }
+
+        .slider-track {
+            height: 40px;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            position: relative;
+            margin-bottom: 10px
+        }
+
+        .slider-target {
+            position: absolute;
+            height: 100%;
+            background: rgba(35, 134, 54, 0.3);
+            border-left: 2px solid #238636;
+            border-right: 2px solid #238636
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            width: 8px;
+            height: 100%;
+            background: #58a6ff;
+            cursor: ew-resize;
+            box-shadow: 0 0 10px #58a6ff
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 24px;
+            color: #58a6ff
+        }
+
+        .status {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px
+        }
+
+        .status-item {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #30363d;
+            background: #0d1117;
+            text-align: center
+        }
+
+        .status-label {
+            font-size: 10px;
+            color: #8b949e;
+            margin-bottom: 5px
+        }
+
+        .status-value {
+            font-size: 20px
+        }
+
+        .status-value.pass {
+            color: #3fb950
+        }
+
+        .status-value.fail {
+            color: #f85149
+        }
+
+        .status-value.pending {
+            color: #f0883e
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            background: #238636;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px
+        }
+
+        .btn:hover {
+            background: #2ea043
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column
+        }
+
+        .overlay.show {
+            display: flex
+        }
+
+        .success-box {
+            border: 4px solid #3fb950;
+            padding: 60px;
+            text-align: center
+        }
+
+        .success-icon {
+            font-size: 64px;
+            color: #3fb950
+        }
+
+        .success-text {
+            font-size: 24px;
+            color: #3fb950;
+            margin-top: 20px;
+            letter-spacing: 4px
+        }
+
+        .token {
+            margin-top: 30px;
+            padding: 15px 30px;
+            border: 2px solid #58a6ff;
+            color: #58a6ff;
+            font-size: 12px;
+            letter-spacing: 3px
+        }
+
+        .reset-link {
+            margin-top: 30px;
+            color: #8b949e;
+            cursor: pointer;
+            font-size: 12px
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">◆ LAYER 3/3</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">01</a>
+            <a href="layer2.html" class="nav-link active">02</a>
+            <a href="layer3.html" class="nav-link active">03</a>
+        </div>
+    </nav>
+    <main>
+        <div class="panel">
+            <div class="title">Calibration Lock</div>
+            <div class="subtitle">Align all 3 sliders to their target zones</div>
+            <div class="slider-container" id="sliders"></div>
+            <div class="status">
+                <div class="status-item">
+                    <div class="status-label">SLIDER 1</div>
+                    <div class="status-value pending" id="st0">○</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">SLIDER 2</div>
+                    <div class="status-value pending" id="st1">○</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">SLIDER 3</div>
+                    <div class="status-value pending" id="st2">○</div>
+                </div>
+            </div>
+            <button class="btn" onclick="verify()">Verify Calibration</button>
+        </div>
+    </main>
+    <div class="overlay" id="overlay">
+        <div class="success-box">
+            <div class="success-icon">✓</div>
+            <div class="success-text">ACCESS GRANTED</div>
+        </div>
+        <div class="token" id="token">TOKEN: --------</div>
+        <div class="reset-link" onclick="resetAll()">[ RESET ALL ]</div>
+    </div>
+    <script>
+        if (!localStorage.getItem('l2')) location.href = 'layer2.html';
+        const sliders = [], targets = [];
+        function init() {
+            const container = document.getElementById('sliders');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const targetStart = 20 + Math.random() * 50;
+                const targetWidth = 15 + Math.random() * 10;
+                targets.push({ start: targetStart, end: targetStart + targetWidth });
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="slider-label"><span>0</span><span>100</span></div>
+                    <div class="slider-track" data-idx="${i}">
+                        <div class="slider-target" style="left:${targetStart}%;width:${targetWidth}%"></div>
+                        <div class="slider-handle" data-idx="${i}" style="left:0%"></div>
+                    </div>
+                    <div class="slider-value" id="val${i}">0</div>
+                `;
+                container.appendChild(div);
+                sliders.push(0);
+            }
+            document.querySelectorAll('.slider-handle').forEach(h => {
+                h.onmousedown = h.ontouchstart = startDrag;
+            });
+        }
+        let dragging = null;
+        function startDrag(e) { dragging = e.target; e.preventDefault() }
+        document.onmousemove = document.ontouchmove = e => {
+            if (!dragging) return;
+            const track = dragging.parentElement;
+            const rect = track.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            let pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+            dragging.style.left = pct + '%';
+            const idx = parseInt(dragging.dataset.idx);
+            sliders[idx] = pct;
+            document.getElementById('val' + idx).textContent = Math.round(pct);
+            updateStatus(idx);
+        };
+        document.onmouseup = document.ontouchend = () => dragging = null;
+        function updateStatus(idx) {
+            const st = document.getElementById('st' + idx);
+            const inTarget = sliders[idx] >= targets[idx].start && sliders[idx] <= targets[idx].end;
+            st.textContent = inTarget ? '✓' : '○';
+            st.classList.remove('pass', 'fail', 'pending');
+            st.classList.add(inTarget ? 'pass' : 'pending');
+        }
+        function verify() {
+            let allGood = true;
+            for (let i = 0; i < 3; i++) {
+                const inTarget = sliders[i] >= targets[i].start && sliders[i] <= targets[i].end;
+                const st = document.getElementById('st' + i);
+                st.classList.remove('pass', 'fail', 'pending');
+                if (inTarget) { st.textContent = '✓'; st.classList.add('pass') }
+                else { st.textContent = '✗'; st.classList.add('fail'); allGood = false }
+            }
+            if (allGood) {
+                localStorage.setItem('l3', '1');
+                document.getElementById('token').textContent = 'TOKEN: ' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                document.getElementById('overlay').classList.add('show');
+            }
+        }
+        function resetAll() { localStorage.clear(); location.href = 'index.html' }
+        init();
+    </script>
+</body>
+
+</html>

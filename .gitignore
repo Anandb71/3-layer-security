@@ -1,0 +1,5 @@
+generate_pdf.py
+__pycache__/
+*.pyc
+screenshots/
+*.pdf
